@@ -1,5 +1,5 @@
 #include "move_component.h"
-#include "game.hpp"
+#include "game.h"
 
 MoveComponent::MoveComponent(class Actor* owner, int updateOrder)
     :Component(owner, updateOrder)

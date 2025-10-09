@@ -1,5 +1,5 @@
 #include "input_component.h"
-#include "game.hpp"
+#include "game.h"
 
 InputComponent::InputComponent(Actor* owner, int update_order)
     :MoveComponent(owner, update_order),

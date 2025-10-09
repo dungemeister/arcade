@@ -1,5 +1,5 @@
 #include "ui_layout.h"
-#include "game.hpp"
+#include "game.h"
 
 UILayout::UILayout(Game* game)
     :m_game(game)

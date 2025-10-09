@@ -1,5 +1,5 @@
 #include "newtonian_move_component.h"
-#include "game.hpp"
+#include "game.h"
 
 NewtonianMoveComponent::NewtonianMoveComponent(Actor* owner, int update_order)
     :MoveComponent(owner, update_order)

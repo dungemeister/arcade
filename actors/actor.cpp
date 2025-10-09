@@ -1,5 +1,5 @@
 #include "actor.hpp"
-#include "game.hpp"
+#include "game.h"
 
 Actor::Actor(Game* game):
     m_state(State::Active),

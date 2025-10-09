@@ -1,5 +1,5 @@
 #include "projectile.h"
-#include "game.hpp"
+#include "game.h"
 
 Projectile::Projectile(Game* game,  const std::string& sprite_filename)
     :Actor(game)

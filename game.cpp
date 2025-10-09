@@ -1,4 +1,4 @@
-#include "game.hpp"
+#include "game.h"
 #include "background_sprite_component.h"
 #include "projectile.h"
 #include "follow_projectile.h"

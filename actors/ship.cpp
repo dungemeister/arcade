@@ -1,5 +1,5 @@
 #include "ship.h"
-#include "game.hpp"
+#include "game.h"
 #include "ship_projectile.h"
 #include "projectile_move_component.h"
 

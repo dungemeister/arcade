@@ -1,5 +1,5 @@
 #include "asteroid_move_component.h"
-#include "game.hpp"
+#include "game.h"
 #include <iostream>
 
 AsteroidMC::AsteroidMC(Actor* owner, int update_order)

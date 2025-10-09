@@ -1,5 +1,5 @@
 #include "ui_main_menu.h"
-#include "game.hpp"
+#include "game.h"
 #include "ui_button.h"
 
 UIMainMenu::UIMainMenu(Game* game)

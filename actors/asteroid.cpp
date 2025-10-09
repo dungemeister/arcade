@@ -1,7 +1,7 @@
 #include "asteroid.h"
 #include "types.h"
 #include "sprite_component.h"
-#include "game.hpp"
+#include "game.h"
 #include "asteroid_move_component.h"
 #include "random.h"
 

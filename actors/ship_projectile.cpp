@@ -1,5 +1,5 @@
 #include "ship_projectile.h"
-#include "game.hpp"
+#include "game.h"
 
 ShipProjectile::ShipProjectile(Game* game, const std::string& sprite_filename)
     :Projectile(game, sprite_filename)

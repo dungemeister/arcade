@@ -2,7 +2,7 @@
 #include "sprite_component.h"
 #include "enemy_projectile.h"
 #include "follow_projectile.h"
-#include "game.hpp"
+#include "game.h"
 #include "follow_move_component.h"
 
 Enemy::Enemy(Game* game, const std::string& sprite_filename)

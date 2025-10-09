@@ -1,5 +1,5 @@
 #include "follow_projectile.h"
-#include "game.hpp"
+#include "game.h"
 
 FollowProjectile::FollowProjectile(Game* game, const std::string& sprite_filename)
     :Actor(game)

@@ -2,7 +2,7 @@
 #include "ui_layout.h"
 #include "SDL3/SDL.h"
 #include <SDL3_ttf/SDL_ttf.h>
-#include "game.hpp"
+#include "game.h"
 
 UIButton::UIButton(class UILayout* layout, const std::string& text)
     :UIWidget(layout)

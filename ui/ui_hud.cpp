@@ -1,5 +1,5 @@
 #include "ui_hud.h"
-#include "game.hpp"
+#include "game.h"
 #include "types.h"
 
 UIHud::UIHud(Game* game)
