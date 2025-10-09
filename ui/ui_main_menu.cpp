@@ -21,6 +21,12 @@ UIMainMenu::UIMainMenu(Game* game)
     button->SetScalePulsing(true);
     AddButtonVertical(button);
 
+    button = new UIButton(this, "Settings");
+    button->SetOpacityPulsing(true);
+    button->SetScalePulsing(true);
+    button->AddClickStrategy([](){});
+    AddButtonVertical(button);
+
     button = new UIButton(this, "Quit");
     button->AddClickStrategy([this](){ m_game->SetRunning(false); });
     button->SetOpacityPulsing(true);
