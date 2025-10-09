@@ -22,9 +22,9 @@ UIMainMenu::UIMainMenu(Game* game)
     AddButtonVertical(button);
 
     button = new UIButton(this, "Settings");
+    button->AddClickStrategy([](){});
     button->SetOpacityPulsing(true);
     button->SetScalePulsing(true);
-    button->AddClickStrategy([](){});
     AddButtonVertical(button);
 
     button = new UIButton(this, "Quit");
@@ -32,12 +32,6 @@ UIMainMenu::UIMainMenu(Game* game)
     button->SetOpacityPulsing(true);
     button->SetScalePulsing(true);
     AddButtonVertical(button);
-
-    for(auto& button: m_buttons){
-        UIButton::UISize size = button->GetSize();
-        size.y += button->GetFontSize();
-        button->SetSize(size);
-    }
 
 }
 
