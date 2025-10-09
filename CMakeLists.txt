@@ -1,0 +1,58 @@
+cmake_minimum_required(VERSION 3.15)
+project(hybrid_sdl_probe
+    VERSION 0.1.0
+    LANGUAGES C CXX
+    DESCRIPTION "game probe from scratch by book lessons")
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+find_package(SDL3 REQUIRED CONFIG REQUIRED COMPONENTS SDL3-shared)
+find_package(SDL3_image REQUIRED)
+find_package(SDL3_ttf REQUIRED)
+
+find_package(PkgConfig REQUIRED)
+find_package(Threads REQUIRED)
+
+pkg_check_modules(LIBPULSE REQUIRED libpulse)
+
+set(UI_DIR ui)
+set(ACTORS_DIR actors)
+set(COMPONENTS_DIR components)
+
+set(SOURCES 
+            ${UI_DIR}/ui_layout.cpp
+            ${UI_DIR}/ui_main_menu.cpp
+            ${UI_DIR}/ui_hud.cpp
+            ${UI_DIR}/ui_widget.cpp
+            ${UI_DIR}/ui_button.cpp
+            ${ACTORS_DIR}/actor.cpp
+            ${ACTORS_DIR}/asteroid.cpp
+            ${ACTORS_DIR}/ship.cpp
+            ${ACTORS_DIR}/projectile.cpp
+            ${ACTORS_DIR}/enemy_projectile.cpp
+            ${ACTORS_DIR}/ship_projectile.cpp
+            ${ACTORS_DIR}/follow_projectile.cpp
+            ${ACTORS_DIR}/enemy.cpp
+            ${COMPONENTS_DIR}/component.cpp
+            ${COMPONENTS_DIR}/animated_sprite_component.cpp
+            ${COMPONENTS_DIR}/background_sprite_component.cpp
+            ${COMPONENTS_DIR}/circle_component.cpp
+            ${COMPONENTS_DIR}/sprite_component.cpp
+            ${COMPONENTS_DIR}/move_component.cpp
+            ${COMPONENTS_DIR}/newtonian_move_component.cpp
+            ${COMPONENTS_DIR}/asteroid_move_component.cpp
+            ${COMPONENTS_DIR}/input_component.cpp
+            ${COMPONENTS_DIR}/projectile_move_component.cpp
+            ${COMPONENTS_DIR}/follow_move_component.cpp
+            game.cpp
+            random.cpp
+            third_party/stb_vorbis.c
+)
+
+add_executable(${PROJECT_NAME} main.cpp)
+
+target_sources(${PROJECT_NAME} PRIVATE ${SOURCES})
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR} ${LIBPULSE_INCLUDE_DIRS})
+target_include_directories(${PROJECT_NAME} PRIVATE ${COMPONENTS_DIR} ${UI_DIR} ${ACTORS_DIR})
+target_link_libraries(${PROJECT_NAME} PRIVATE pulse pulse-simple)
+target_link_libraries(${PROJECT_NAME} PRIVATE SDL3_image::SDL3_image SDL3_ttf::SDL3_ttf SDL3::SDL3)
