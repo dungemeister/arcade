@@ -22,6 +22,7 @@ public:
     virtual void HandleEvent(const SDL_Event&) {};
 
     void AddWidget(UIWidget* widget){ m_widgets.push_back(widget); }
+    void RemoveWidget(UIWidget* widget);
 protected:
     Game* m_game;
     UILayout::State m_state;

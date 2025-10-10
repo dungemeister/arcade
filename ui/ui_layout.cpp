@@ -14,3 +14,8 @@ UILayout::~UILayout(){
     }
     GetGame()->RemoveUI(this);
 }
+
+void UILayout::RemoveWidget(UIWidget* widget){
+    auto it = std::find(m_widgets.begin(), m_widgets.end(), widget);
+    m_widgets.erase(it);
+}

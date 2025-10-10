@@ -8,6 +8,7 @@
 #include "sprite_component.h"
 #include "ui_hud.h"
 #include "ui_main_menu.h"
+#include "ui_statistics_hud.h"
 
 #include <algorithm>
 #include <vector>
@@ -68,6 +69,9 @@ public:
 
     void LoadMainMenu();
     void UnloadMainMenu();
+
+    void LoadStatisticsHud();
+    void UnloadStatisticsHud();
 
     void LoadHud();
     void UnloadHud();
@@ -146,6 +150,8 @@ private:
     float m_fps;
 
     UIMainMenu* m_main_menu;
+    UIStatisticsHud* m_statistics_hud;
+
     std::unordered_map<std::string, SDL_Texture*> m_textures;
     bool m_updating_actors;
     std::vector<Actor*> m_pending_actors;
@@ -155,7 +161,7 @@ private:
     std::vector<Ship*> m_ships;
     std::vector<Asteroid*> m_asteroids;
     std::vector<Enemy*> m_enemies;
-    std::vector<UILayout*> m_ui_screens;
+    std::vector<UILayout*> m_ui_layouts;
 
     std::thread m_music_thr;
     bool m_music_play;

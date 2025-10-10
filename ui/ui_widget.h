@@ -17,7 +17,8 @@ public:
     UISize  GetSizePadding() const          { return m_size_padding; }
     
     void SetPosition(const SDL_FPoint& pos) { m_size.x = pos.x; m_size.y = pos.y; }
-
+    SDL_FPoint GetPosition() const { return {m_size.x, m_size.y}; }
+    
     bool    IsHovered() const               { return m_hovered;}
     void    SetHovered(bool state)          { m_hovered = state; }
 

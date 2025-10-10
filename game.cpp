@@ -44,6 +44,7 @@ bool Game::Initialize(){
 
     LoadBackground();
     LoadMainMenu();
+    LoadStatisticsHud();
     m_current_ticks = SDL_GetTicks();
     return true;
 }
@@ -170,13 +171,28 @@ void Game::UnloadBackground(){
 }
 
 void Game::LoadMainMenu(){
-    m_main_menu = new UIMainMenu(this);
+    if(!m_main_menu){
+        m_main_menu = new UIMainMenu(this);
+    }
+
 }
 
 void Game::UnloadMainMenu(){
-    auto it = std::find(m_ui_screens.begin(), m_ui_screens.end(), m_main_menu);
-    m_ui_screens.erase(it);
+    auto it = std::find(m_ui_layouts.begin(), m_ui_layouts.end(), m_main_menu);
+    m_ui_layouts.erase(it);
+    // delete m_main_menu;
 }
+
+void Game::LoadStatisticsHud(){
+    m_statistics_hud = new UIStatisticsHud(this);
+}
+
+void Game::UnloadStatisticsHud(){
+    auto it = std::find(m_ui_layouts.begin(), m_ui_layouts.end(), m_statistics_hud);
+    m_ui_layouts.erase(it);
+    // delete m_statistics_hud;
+}
+
 
 void Game::LoadHud(){
     UIHud* hud = new UIHud(this);
@@ -199,7 +215,7 @@ void Game::LoadData(){
 
     AddShip(ship);
     
-    for(int i = 0; i < 1; i++)
+    for(int i = 0; i < 1000; i++)
     {
         auto enemy = new Enemy(this, "Assets/Enemy.png");
         enemy->SetPosition({static_cast<float>(m_width - 50), Random::GetFloatRange(50.f, m_height - 50.f)});
@@ -294,16 +310,17 @@ void Game::RemoveAllShips(){
 }
 
 void Game::AddUI(UILayout* ui){
-    m_ui_screens.push_back(ui);
+    m_ui_layouts.push_back(ui);
 }
 
 void Game::RemoveUI(UILayout* ui){
-    auto it = std::find(m_ui_screens.begin(), m_ui_screens.end(), ui);
-    m_ui_screens.erase(it);
+    auto it = std::find(m_ui_layouts.begin(), m_ui_layouts.end(), ui);
+    m_ui_layouts.erase(it);
 
 }
 
 void Game::run(){
+    SDL_Log("PID: %d", getpid());
     Uint32 lastTime = SDL_GetTicks();
     int frames = 0;
     Uint32 interval = 1000; // 1 секунда в мс
@@ -396,6 +413,7 @@ void Game::UpdateGame(){
     else if(m_state == GameState::MainMenu){
         m_main_menu->Update(deltatime);
     }
+    m_statistics_hud->Update(deltatime);
 
 }
 void Game::ProcessOutput(){
@@ -422,7 +440,7 @@ void Game::ProcessOutput(){
                                 " Ship objs: "      + std::to_string(ship_counter) +
                                 " Asteroid objs: "  + std::to_string(asteroid_counter);
     // m_font_size - global font size
-    for(auto ui: m_ui_screens){
+    for(auto ui: m_ui_layouts){
         ui->Draw();
     }
     // RenderText(m_renderer, color, text, {m_width, 0});

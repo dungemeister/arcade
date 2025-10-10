@@ -3,6 +3,7 @@
 #include "SDL3/SDL.h"
 #include <SDL3_ttf/SDL_ttf.h>
 #include "game.h"
+#include "palette.h"
 
 UIButton::UIButton(class UILayout* layout, const std::string& text)
     :UIWidget(layout)
@@ -20,7 +21,7 @@ UIButton::UIButton(class UILayout* layout, const std::string& text)
     ,m_opacity_max(1.f)
     ,m_opacity(0.f)
 {
-    m_color = {0xff, 0x7f, 00, 255};
+    m_color = Colors::OceanSunset::moonstone;
     
     m_renderer = m_layout->GetGame()->GetRenderer();
     m_font = TTF_OpenFont("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", m_font_size);
@@ -155,7 +156,7 @@ void UIButton::DrawBorder(){
 
 void UIButton::DrawText(){
     if(IsHovered()){
-        m_color = {0, 128, 128, 44};
+        m_color = Colors::OceanSunset::atomic_tangerine;
         
         SDL_RenderTexture(m_renderer, m_texture, NULL, &m_dst_rect);
     }

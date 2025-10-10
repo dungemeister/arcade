@@ -1,0 +1,29 @@
+#pragma once
+#include "ui_widget.h"
+#include <string>
+#include "SDL3/SDL.h"
+#include "SDL3_ttf/SDL_ttf.h"
+
+class UIText: public UIWidget{
+public:
+    UIText(class UILayout* layout);
+    virtual ~UIText();
+    void UpdateTexture();
+    void SetText(const std::string& text);
+
+    void SetColor(const SDL_Color& col) { m_color = col; }
+    void Update(float deltatime) override;
+    void Draw() override;
+    // void HandleEvent(const SDL_Event& event) override;
+private:
+    SDL_Texture* m_texture;
+    TTF_Font* m_font;
+    SDL_FRect m_rect;
+    int m_font_size;
+    std::string m_text;
+    SDL_Color m_color;
+
+    const std::string m_font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf";
+    
+    SDL_Surface* CreateSurface(const std::string& text);
+};

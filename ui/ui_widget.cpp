@@ -12,5 +12,5 @@ UIWidget::UIWidget(class UILayout* layout)
 UIWidget::UIWidget()
     :UIWidget(nullptr)
 {
-
+    m_layout->RemoveWidget(this);
 }
