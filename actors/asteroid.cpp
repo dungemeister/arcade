@@ -11,7 +11,7 @@ Asteroid::Asteroid(Game* game):
     SetScale(1.0f);
     Vector2 rand_pos = Random::GetVector({0.f, 100.f}, {game->GetWindowWidth(), game->GetWindowHeight()});
     SetPosition(rand_pos);
-    // SetRotation(Random::GetFloatRange(MyMath::PiOver2, 3 * MyMath::PiOver2));
+    SetRotation(Random::GetFloatRange(MyMath::PiOver2, 3 * MyMath::PiOver2));
     // SetRotation(1.34f * MyMath::PiOver2);
 
     SpriteComponent* sc = new SpriteComponent(this, 100);
@@ -21,5 +21,5 @@ Asteroid::Asteroid(Game* game):
     amc->SetForwardSpeed(Random::GetFloatRange(50.f, 200.f));
     amc->SetAngularSpeed(0.01f);
 
-    SDL_Log("Asteroid: [%p]", this);
+    // SDL_Log("Asteroid: [%p]", this);
 }

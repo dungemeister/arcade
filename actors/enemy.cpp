@@ -22,7 +22,7 @@ Enemy::Enemy(Game* game, const std::string& sprite_filename)
 
     m_circle = new CircleComponent(this, 30);
     m_circle->SetRadius(sc->GetTextureHeight());
-    SDL_Log("Enemy: [%p]", this);
+    // SDL_Log("Enemy: [%p]", this);
 }
 Enemy::~Enemy(){
     GetGame()->RemoveEnemy(this);
