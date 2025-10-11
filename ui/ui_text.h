@@ -25,4 +25,8 @@ private:
     const std::string m_font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf";
     
     SDL_Surface* CreateSurface(const std::string& text);
+    
+    void DrawBackground();
+    void DrawBorder();
+    void DrawText();
 };

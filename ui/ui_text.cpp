@@ -45,10 +45,38 @@ void UIText::Update(float deltatime){
 }
 
 void UIText::Draw(){
+    DrawBackground();
+    DrawBorder();
+    DrawText();
+
+}
+
+void UIText::DrawText(){
+    if(!m_layout) return;
+
     auto render = m_layout->GetGame()->GetRenderer();
     if(m_texture){
         SDL_RenderTexture(render, m_texture, NULL, &m_rect);
     }
+}
+
+void UIText::DrawBorder(){
+    if(!m_layout) return;
+
+    auto renderer = m_layout->GetGame()->GetRenderer();
+    SDL_Color color = Colors::OceanSunset::midnight_green;
+    SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+    SDL_RenderRect(renderer, &m_rect);
+}
+
+void UIText::DrawBackground(){
+    if(!m_layout) return;
+
+    auto renderer = m_layout->GetGame()->GetRenderer();
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+    SDL_SetRenderDrawColor(renderer, m_color.r, m_color.g, m_color.b, 33); // Белый цвет
+
+    SDL_RenderFillRect(renderer, &m_rect);
 }
 
 SDL_Surface* UIText::CreateSurface(const std::string& text){

@@ -1,19 +1,15 @@
 #pragma once
-#include "ui_layout.h"
+#include "ui_hor_layout.h"
 #include "ui_text.h"
 #include "ui_button.h"
 
-class UISettings: public UILayout{
+class UISettings: public UIHorLayout{
 public:
     UISettings(class Game* game);
-
+    ~UISettings() = default;
     void Draw() override;
     void Update(float delatime) override;
 
 private:
-    std::vector<UIButton*> m_buttons;
-    std::vector<UIText*> m_texts;
-    SDL_FRect m_rect;
 
-    void AddWidgetVertical(UIWidget* widget);
 };

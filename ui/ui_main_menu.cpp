@@ -4,7 +4,6 @@
 
 UIMainMenu::UIMainMenu(Game* game)
     :UIHorLayout(game)
-    ,m_max_width(0.f)
 {
     m_rect.x = game->GetWindowWidth() / 2;
     m_rect.y = game->GetWindowHeight() / 2;
@@ -33,9 +32,8 @@ UIMainMenu::UIMainMenu(Game* game)
     button->SetScalePulsing(true);
     PushBackWidget(button);
 
-    UpdateMaxWidgetsWidth();
-    SetWindowAlignment(WindowAlignment::Center);
-    SetAlignment(Alignment::Center);
+    SetAlignment(Alignment::ECenter);
+    SetWindowAlignment(WindowAlignment::EWindowCenter);
 }
 
 UIMainMenu::~UIMainMenu(){
@@ -53,6 +51,7 @@ void UIMainMenu::Draw(){
     for(auto widget: m_widgets){
         widget->Draw();
     }
+    DrawBorder();
 }
 
 void UIMainMenu::HandleEvent(const SDL_Event& event){
@@ -61,29 +60,4 @@ void UIMainMenu::HandleEvent(const SDL_Event& event){
         widget->HandleEvent(event);
     }
 
-}
-
-void UIMainMenu::UpdateMaxWidgetsWidth(){
-    for(auto widget: m_widgets){
-        auto size = widget->GetSize();
-        m_max_width = std::max(size.w, m_max_width);
-    }
-}
-
-void UIMainMenu::SetWindowAlignment(WindowAlignment align){
-    switch(align){
-        case WindowAlignment::Left:
-            m_rect.x = 0;
-        break;
-        case WindowAlignment::Right:
-            m_rect.x = m_game->GetWindowWidth() - m_max_width;
-        break;
-        case WindowAlignment::Center:
-            m_rect.x = (m_game->GetWindowWidth() - m_max_width) / 2;
-            
-        break;
-        default:
-            SDL_Log("Unknown layout alignment");
-        break;
-    }
 }

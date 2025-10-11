@@ -151,7 +151,12 @@ void UIButton::DrawBackground(){
 }
 
 void UIButton::DrawBorder(){
+    if(!m_layout->GetGame()) return;
 
+    auto renderer = m_layout->GetGame()->GetRenderer();
+    SDL_Color color = Colors::OceanSunset::midnight_green;
+    SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+    SDL_RenderRect(renderer, &m_rect);
 }
 
 void UIButton::DrawText(){
