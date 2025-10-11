@@ -18,6 +18,7 @@ pkg_check_modules(LIBPULSE REQUIRED libpulse)
 set(UI_DIR ui)
 set(ACTORS_DIR actors)
 set(COMPONENTS_DIR components)
+set(MISC_DIR misc)
 
 set(SOURCES 
             ${UI_DIR}/ui_layout.cpp
@@ -48,8 +49,8 @@ set(SOURCES
             ${COMPONENTS_DIR}/input_component.cpp
             ${COMPONENTS_DIR}/projectile_move_component.cpp
             ${COMPONENTS_DIR}/follow_move_component.cpp
+            ${MISC_DIR}/random.cpp
             game.cpp
-            random.cpp
             third_party/stb_vorbis.c
 )
 
@@ -57,6 +58,6 @@ add_executable(${PROJECT_NAME} main.cpp)
 
 target_sources(${PROJECT_NAME} PRIVATE ${SOURCES})
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR} ${LIBPULSE_INCLUDE_DIRS})
-target_include_directories(${PROJECT_NAME} PRIVATE ${COMPONENTS_DIR} ${UI_DIR} ${ACTORS_DIR})
+target_include_directories(${PROJECT_NAME} PRIVATE ${COMPONENTS_DIR} ${UI_DIR} ${ACTORS_DIR} ${MISC_DIR})
 target_link_libraries(${PROJECT_NAME} PRIVATE pulse pulse-simple)
 target_link_libraries(${PROJECT_NAME} PRIVATE SDL3_image::SDL3_image SDL3_ttf::SDL3_ttf SDL3::SDL3)
