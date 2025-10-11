@@ -3,8 +3,8 @@
 #include "ui_button.h"
 
 UIMainMenu::UIMainMenu(Game* game)
-    :UILayout(game)
-    ,m_rect()
+    :UIHorLayout(game)
+    ,m_max_width(0.f)
 {
     m_rect.x = game->GetWindowWidth() / 2;
     m_rect.y = game->GetWindowHeight() / 2;
@@ -14,25 +14,28 @@ UIMainMenu::UIMainMenu(Game* game)
     button->AddClickStrategy([this](){ m_game->StartGame(); });
     button->SetOpacityPulsing(true);
     button->SetScalePulsing(true);
-    AddButtonVertical(button);
+    PushBackWidget(button);
     
     button = new UIButton(this, "Load");
     button->SetOpacityPulsing(true);
     button->SetScalePulsing(true);
-    AddButtonVertical(button);
+    PushBackWidget(button);
 
     button = new UIButton(this, "Settings");
-    button->AddClickStrategy([](){});
+    button->AddClickStrategy([this](){ m_game->StartSettingsUI(); });
     button->SetOpacityPulsing(true);
     button->SetScalePulsing(true);
-    AddButtonVertical(button);
+    PushBackWidget(button);
 
     button = new UIButton(this, "Quit");
     button->AddClickStrategy([this](){ m_game->SetRunning(false); });
     button->SetOpacityPulsing(true);
     button->SetScalePulsing(true);
-    AddButtonVertical(button);
+    PushBackWidget(button);
 
+    UpdateMaxWidgetsWidth();
+    SetWindowAlignment(WindowAlignment::Center);
+    SetAlignment(Alignment::Center);
 }
 
 UIMainMenu::~UIMainMenu(){
@@ -40,32 +43,47 @@ UIMainMenu::~UIMainMenu(){
 }
 
 void UIMainMenu::Update(float deltatime){
-    for(auto button: m_buttons){
-        button->Update(deltatime);
+    for(auto widget: m_widgets){
+        widget->Update(deltatime);
     }
 }
 
 void UIMainMenu::Draw(){
-    for(auto button: m_buttons){
-        button->Draw();
+    if(GetState() == UILayout::State::EClosed) return;
+    for(auto widget: m_widgets){
+        widget->Draw();
     }
 }
 
 void UIMainMenu::HandleEvent(const SDL_Event& event){
-    for(auto button: m_buttons){
-        button->HandleEvent(event);
+    
+    for(auto widget: m_widgets){
+        widget->HandleEvent(event);
+    }
+
+}
+
+void UIMainMenu::UpdateMaxWidgetsWidth(){
+    for(auto widget: m_widgets){
+        auto size = widget->GetSize();
+        m_max_width = std::max(size.w, m_max_width);
     }
 }
 
-void UIMainMenu::AddButtonVertical(UIButton* button){
-    SDL_FPoint pos = {};
-    pos.x = m_rect.x;
-    pos.y = m_rect.y + m_rect.h;
-
-    m_rect.w = std::max(m_rect.w, button->GetSizePadding().w);
-    m_rect.h += button->GetSizePadding().h;
-    button->SetPosition(pos);
-
-    m_buttons.push_back(button);
-    
+void UIMainMenu::SetWindowAlignment(WindowAlignment align){
+    switch(align){
+        case WindowAlignment::Left:
+            m_rect.x = 0;
+        break;
+        case WindowAlignment::Right:
+            m_rect.x = m_game->GetWindowWidth() - m_max_width;
+        break;
+        case WindowAlignment::Center:
+            m_rect.x = (m_game->GetWindowWidth() - m_max_width) / 2;
+            
+        break;
+        default:
+            SDL_Log("Unknown layout alignment");
+        break;
+    }
 }

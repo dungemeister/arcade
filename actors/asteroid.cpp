@@ -5,8 +5,8 @@
 #include "asteroid_move_component.h"
 #include "random.h"
 
-Asteroid::Asteroid(Game* game):
-    Actor(game)
+Asteroid::Asteroid(Game* game)
+    :Actor(game)
 {
     SetScale(1.0f);
     Vector2 rand_pos = Random::GetVector({0.f, 100.f}, {game->GetWindowWidth(), game->GetWindowHeight()});

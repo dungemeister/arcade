@@ -7,7 +7,6 @@ UIText::UIText(class UILayout* layout)
     :UIWidget(layout)
     ,m_texture(nullptr)
     ,m_font(nullptr)
-    ,m_rect()
     ,m_font_size(16)
     ,m_text()
 {

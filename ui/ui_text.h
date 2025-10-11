@@ -18,7 +18,6 @@ public:
 private:
     SDL_Texture* m_texture;
     TTF_Font* m_font;
-    SDL_FRect m_rect;
     int m_font_size;
     std::string m_text;
     SDL_Color m_color;

@@ -43,8 +43,15 @@ bool Game::Initialize(){
     InitPulseAudio();
 
     LoadBackground();
-    LoadMainMenu();
     LoadStatisticsHud();
+    LoadSettingsUI();
+    LoadMainMenu();
+
+    m_lays.insert(std::pair<GameState, std::vector<UILayout*>>(GameState::MainMenu, {m_main_menu, m_statistics_hud}));
+    m_lays.insert(std::pair<GameState, std::vector<UILayout*>>(GameState::Active, {m_statistics_hud}));
+    m_lays.insert(std::pair<GameState, std::vector<UILayout*>>(GameState::PauseMenu, {m_statistics_hud}));
+    m_lays.insert(std::pair<GameState, std::vector<UILayout*>>(GameState::Settings, {m_settings_ui, m_statistics_hud}));
+
     m_current_ticks = SDL_GetTicks();
     return true;
 }
@@ -103,11 +110,23 @@ void Game::StartGame(){
 }
 
 void Game::EndGame(){
-    SetState(GameState::MainMenu);
     UnloadData();
     UnloadHud();
     LoadMainMenu();
 }
+
+void Game::StartSettingsUI(){
+    UnloadMainMenu();
+    UnloadData();
+    UnloadHud();
+    LoadSettingsUI();
+}
+
+void Game::EndSettingsUI(){
+    UnloadSettingsUI();
+    SetState(GameState::MainMenu);
+}
+
 
 void Game::StopMusicThread(){
     m_music_play = false;
@@ -174,22 +193,31 @@ void Game::LoadMainMenu(){
     if(!m_main_menu){
         m_main_menu = new UIMainMenu(this);
     }
+    SetState(GameState::MainMenu);
+    m_main_menu->SetState(UILayout::State::EActive);
 
 }
 
 void Game::UnloadMainMenu(){
     auto it = std::find(m_ui_layouts.begin(), m_ui_layouts.end(), m_main_menu);
-    m_ui_layouts.erase(it);
+    if(it != m_ui_layouts.end())
+        (*it)->SetState(UILayout::State::EClosed);
     // delete m_main_menu;
 }
 
 void Game::LoadStatisticsHud(){
-    m_statistics_hud = new UIStatisticsHud(this);
+    if(!m_statistics_hud){
+        m_statistics_hud = new UIStatisticsHud(this);
+    }
+    m_statistics_hud->SetState(UILayout::State::EActive);
+
 }
 
 void Game::UnloadStatisticsHud(){
     auto it = std::find(m_ui_layouts.begin(), m_ui_layouts.end(), m_statistics_hud);
-    m_ui_layouts.erase(it);
+    // m_ui_layouts.erase(it);
+    if(it != m_ui_layouts.end())
+        (*it)->SetState(UILayout::State::EClosed);
     // delete m_statistics_hud;
 }
 
@@ -231,6 +259,20 @@ void Game::LoadData(){
 void Game::UnloadData(){
     RemoveAllEnemies();
     RemoveAllShips();
+}
+
+void Game::LoadSettingsUI(){
+    if(!m_settings_ui){
+        m_settings_ui = new UISettings(this);
+    }
+    SetState(GameState::Settings);
+    m_settings_ui->SetState(UILayout::State::EActive);
+}
+
+void Game::UnloadSettingsUI(){
+    auto it = std::find(m_ui_layouts.begin(), m_ui_layouts.end(), m_settings_ui);
+    // m_ui_layouts.erase(it);
+    (*it)->SetState(UILayout::State::EClosed);
 }
 
 void Game::AddActor(Actor* actor){
@@ -350,11 +392,15 @@ void Game::ProcessInput(){
                 break;
             case SDL_EVENT_KEY_UP: //Key released
                 if(event.key.key == SDLK_SPACE){
-                    if(m_state == GameState::Active) m_state = GameState::Menu;
-                    else if(m_state == GameState::Menu) m_state = GameState::Active;
+                    if(m_state == GameState::Active) m_state = GameState::PauseMenu;
+                    else if(m_state == GameState::PauseMenu) m_state = GameState::Active;
                 }
                 if(event.key.key == SDLK_ESCAPE){
-                    m_running = false;
+                    if(GetState() == GameState::Settings)
+                    {
+                        UnloadSettingsUI();
+                        LoadMainMenu();
+                    }
                 }
                 if(event.key.key == SDLK_R){
                     UnloadData();
@@ -373,6 +419,8 @@ void Game::ProcessInput(){
         }
         if(m_state == Game::GameState::MainMenu && m_main_menu)
             m_main_menu->HandleEvent(event);
+        if(m_state == Game::GameState::Settings && m_settings_ui)
+            m_settings_ui->HandleEvent(event);
     }
     auto state = SDL_GetKeyboardState(NULL);
     
@@ -433,27 +481,15 @@ void Game::ProcessOutput(){
         if(dynamic_cast<Asteroid*>(sprite->GetOwner())) asteroid_counter++;
     }
     
-    SDL_Color color = {0xff, 128, 128, 255}; // Белый цвет
-    std::string text = "FPS:" + std::to_string(static_cast<int>(m_fps));
-    std::string text_counter =  " Enemy obj: "      + std::to_string(enemy_counter) +
-                                " Projectile objs:" + std::to_string(projectiles_counter) +
-                                " Ship objs: "      + std::to_string(ship_counter) +
-                                " Asteroid objs: "  + std::to_string(asteroid_counter);
-    // m_font_size - global font size
-    for(auto ui: m_ui_layouts){
-        ui->Draw();
-    }
-    // RenderText(m_renderer, color, text, {m_width, 0});
-    // RenderText(m_renderer, color, text_counter, {m_width, m_font_size});
-    // if(m_ships.empty()&&false){
+    // std::string text_counter =  " Enemy obj: "      + std::to_string(enemy_counter) +
+    //                             " Projectile objs:" + std::to_string(projectiles_counter) +
+    //                             " Ship objs: "      + std::to_string(ship_counter) +
+    //                             " Asteroid objs: "  + std::to_string(asteroid_counter);
 
-    //     RenderText(m_renderer, color, "Ну че блять доигрался?", {m_width / 2, 10 * m_font_size});
-    //     m_state = GameState::Paused;
-    // }
-    // if(m_enemies.empty()&&false){
-    //     RenderText(m_renderer, color, "Легчайшая для величайшего", {m_width / 2, 10 * m_font_size});
-    //     m_state = GameState::Paused;
-    // }
+    auto lays = m_lays.at(GetState());
+    for(auto layout: lays){
+        layout->Draw();
+    }
     SDL_RenderPresent(m_renderer);
 }
 

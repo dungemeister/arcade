@@ -21,12 +21,14 @@ set(COMPONENTS_DIR components)
 
 set(SOURCES 
             ${UI_DIR}/ui_layout.cpp
+            ${UI_DIR}/ui_hor_layout.cpp
             ${UI_DIR}/ui_main_menu.cpp
             ${UI_DIR}/ui_hud.cpp
             ${UI_DIR}/ui_widget.cpp
             ${UI_DIR}/ui_button.cpp
             ${UI_DIR}/ui_text.cpp
             ${UI_DIR}/ui_statistics_hud.cpp
+            ${UI_DIR}/ui_settings.cpp
             ${ACTORS_DIR}/actor.cpp
             ${ACTORS_DIR}/asteroid.cpp
             ${ACTORS_DIR}/ship.cpp

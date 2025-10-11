@@ -25,6 +25,7 @@ public:
     void RemoveWidget(UIWidget* widget);
 protected:
     Game* m_game;
+    SDL_FRect m_rect;
     UILayout::State m_state;
     std::vector<UIWidget*> m_widgets;
 };

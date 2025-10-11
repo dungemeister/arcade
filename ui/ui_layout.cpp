@@ -3,7 +3,8 @@
 
 UILayout::UILayout(Game* game)
     :m_game(game)
-    ,m_state(UILayout::State::EClosed)
+    ,m_state(UILayout::State::EActive)
+    ,m_rect()
 {
     GetGame()->AddUI(this);
 }

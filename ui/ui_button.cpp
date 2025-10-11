@@ -40,11 +40,11 @@ UIButton::UIButton(class UILayout* layout, const std::string& text)
     
     int x_padding = 5;
     int y_padding = 5;
-    m_size_padding = size;
-    m_size_padding.x -= x_padding;
-    m_size_padding.y += y_padding;
-    m_size_padding.w += x_padding * 2;
-    m_size_padding.h += y_padding * 2;
+    m_rect_padding = size;
+    m_rect_padding.x -= x_padding;
+    m_rect_padding.y += y_padding;
+    m_rect_padding.w += x_padding * 2;
+    m_rect_padding.h += y_padding * 2;
 
     m_texture = SDL_CreateTextureFromSurface(m_renderer, m_surface);
     if(!m_texture){

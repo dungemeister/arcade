@@ -2,6 +2,13 @@
 #include "SDL3/SDL.h"
 
 namespace Colors {
+    static SDL_Color lerp(const SDL_Color& a, const SDL_Color& b, float t){
+        return {static_cast<Uint8>(a.r + (b.r - a.r) * t),
+                static_cast<Uint8>(a.g + (b.g - a.g) * t),
+                static_cast<Uint8>(a.b + (b.b - a.b) * t),
+                static_cast<Uint8>(a.a + (b.a - a.a) * t)
+                };
+    }
     namespace Sunset {
         constexpr SDL_Color saffron = {0xF2, 0xC4, 0x47, 0xFF};
         constexpr SDL_Color pantone = {0xF7, 0x62, 0x18, 0xFF};

@@ -9,6 +9,7 @@
 #include "ui_hud.h"
 #include "ui_main_menu.h"
 #include "ui_statistics_hud.h"
+#include "ui_settings.h"
 
 #include <algorithm>
 #include <vector>
@@ -42,8 +43,9 @@ public:
 
     enum GameState{
         MainMenu,
+        Settings,
         Active,
-        Menu,
+        PauseMenu,
     };
 
     float GetWindowWidth() const { return m_width; }
@@ -57,6 +59,8 @@ public:
     void StartGame();
     void EndGame();
 
+    void StartSettingsUI();
+    void EndSettingsUI();
 
     void SetState(Game::GameState state) { m_state = state; }
     Game::GameState GetState() const { return m_state; }
@@ -78,6 +82,10 @@ public:
 
     void LoadData();
     void UnloadData();
+
+    void LoadSettingsUI();
+    void UnloadSettingsUI();
+
     void Shutdown(){
         UnloadData();
         // UnloadHud();
@@ -151,6 +159,7 @@ private:
 
     UIMainMenu* m_main_menu;
     UIStatisticsHud* m_statistics_hud;
+    UISettings* m_settings_ui;
 
     std::unordered_map<std::string, SDL_Texture*> m_textures;
     bool m_updating_actors;
@@ -163,6 +172,7 @@ private:
     std::vector<Enemy*> m_enemies;
     std::vector<UILayout*> m_ui_layouts;
 
+    std::unordered_map<GameState, std::vector<UILayout*>> m_lays;
     std::thread m_music_thr;
     bool m_music_play;
     pa_simple* m_server;
