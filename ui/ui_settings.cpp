@@ -1,5 +1,6 @@
 #include "ui_settings.h"
 #include "game.h"
+#include "ui_slider.h"
 
 UISettings::UISettings(Game* game)
     :UIHorLayout(game)
@@ -10,6 +11,10 @@ UISettings::UISettings(Game* game)
     UIText* text = new UIText(this);
     text->SetText("Diffucilty: TODO");
     PushBackWidget(text);
+
+    // UISlider<int>* slider = new UISlider<int>(this);
+    UISlider<int> slider(this);
+    // PushBackWidget(slider);
     
     SetWindowAlignment(WindowAlignment::EWindowLeft);
     SetAlignment(Alignment::ECenter);

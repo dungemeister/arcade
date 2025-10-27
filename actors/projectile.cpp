@@ -26,6 +26,7 @@ void Projectile::SetProjectileForwardSpeed(float val){
 }
 
 void Projectile::UpdateActor(float deltatime){
+    auto rot = Actor::GetRotation();
     if(GetState() == State::Dead) return;
     if((GetPosition().x < 0 || GetPosition().x > GetGame()->GetWindowWidth()) ||
        (GetPosition().y < 0 || GetPosition().y > GetGame()->GetWindowHeight())){

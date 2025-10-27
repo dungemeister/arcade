@@ -26,11 +26,11 @@ Ship::Ship(Game* game)
 
 	m_ic = new InputComponent(this, 30);
 	m_ic->SetMaxForwardSpeed(400.f);
-	m_ic->SetMaxAngularSpeed(4.f);
-	m_ic->SetForwardKey(SDL_SCANCODE_W);
-	m_ic->SetBackKey(SDL_SCANCODE_S);
-	m_ic->SetClockWiseKey(SDL_SCANCODE_A);
-	m_ic->SetCounterClockWiseKey(SDL_SCANCODE_D);
+	m_ic->SetMaxVerticalSpeed(300.f);
+	m_ic->SetForwardKey(SDL_SCANCODE_D);
+	m_ic->SetBackKey(SDL_SCANCODE_A);
+	m_ic->SetUpKey(SDL_SCANCODE_W);
+	m_ic->SetDownKey(SDL_SCANCODE_S);
 
 	m_laser_shoot_key = SDL_SCANCODE_LSHIFT;
 	m_alt_laser_shoot_key = SDL_SCANCODE_LALT;
@@ -38,6 +38,8 @@ Ship::Ship(Game* game)
 	m_circle = new CircleComponent(this, 50);
 	m_circle->SetRadius(static_cast<float>((m_asc->GetTextureHeight() / 2)));
 	SDL_Log("Ship: [%p]", this);
+
+	game->AddShip(this);
 }
 
 Ship::~Ship(){

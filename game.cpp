@@ -80,6 +80,10 @@ void Game::InitPulseAudio(){
     }
     std::string sound_filename = "Assets/Sounds/main_theme.ogg";
     stb_vorbis* m_main_theme = stb_vorbis_open_filename(sound_filename.c_str(), NULL, NULL);
+    if(!m_main_theme){
+        SDL_Log("Failed to create stb_vorbis*");
+        return;
+    }
     stb_vorbis_seek_start(m_main_theme);
 
     // assert(ss.rate == m_main_theme->sample_rate);
@@ -103,8 +107,9 @@ void Game::InitPulseAudio(){
 }
 
 void Game::StartGame(){
-    UnloadMainMenu();
+    SDL_Log("StartGame()");
     SetState(GameState::Active);
+    UnloadMainMenu();
     LoadData();
     LoadHud();
 }
@@ -223,7 +228,7 @@ void Game::UnloadStatisticsHud(){
 
 
 void Game::LoadHud(){
-    UIHud* hud = new UIHud(this);
+
 }
 
 void Game::UnloadHud(){
@@ -232,27 +237,29 @@ void Game::UnloadHud(){
 
 void Game::LoadData(){
 
-    float width = 1024.f;
-    float height = 768.f;
-    for(int i = 0; i < 10; i++)
-        m_asteroids.emplace_back(new Asteroid(this));
+    for(int i = 0; i < 0; i++){
+        auto aster = new Asteroid(this);
+        aster->SetScale(Random::GetFloatRange(0.2, 0.8));
+        m_asteroids.emplace_back(aster);
+    }   
 
     auto ship = new Ship(this);
     ship->SetPosition({100, m_height / 2});
     ship->SetScale(2.f);
 
-    AddShip(ship);
-    
-    for(int i = 0; i < 1000; i++)
-    {
-        auto enemy = new Enemy(this, "Assets/Enemy.png");
-        enemy->SetPosition({static_cast<float>(m_width - 50), Random::GetFloatRange(50.f, m_height - 50.f)});
-        enemy->SetScale(2.f);
-        enemy->SetRotation(MyMath::Pi);
+    Actor* actor = new Actor(this);
+    auto spawner = new SpawnComponent(actor, 100);
 
-        m_enemies.push_back(enemy);
+    // for(int i = 0; i < 1000; i++)
+    // {
+    //     auto enemy = new Enemy(this, "Assets/Enemy.png");
+    //     enemy->SetPosition({static_cast<float>(m_width - 50), Random::GetFloatRange(50.f, m_height - 50.f)});
+    //     enemy->SetScale(2.f);
+    //     enemy->SetRotation(MyMath::Pi);
 
-    }
+    //     m_enemies.push_back(enemy);
+
+    // }
 
 }
 
@@ -363,11 +370,11 @@ void Game::RemoveUI(UILayout* ui){
 
 void Game::run(){
     SDL_Log("PID: %d", getpid());
-    Uint32 lastTime = SDL_GetTicks();
+    Uint64 lastTime = SDL_GetTicks();
     int frames = 0;
-    Uint32 interval = 1000; // 1 секунда в мс
+    Uint64 interval = 100; // 1 секунда в мс
     while(m_running){
-        Uint32 currentTime = SDL_GetTicks();
+        Uint64 currentTime = SDL_GetTicks();
         frames++;
 
         if (currentTime - lastTime >= interval) {
@@ -440,7 +447,9 @@ void Game::UpdateGame(){
     if(m_state == GameState::Active){
         m_updating_actors = true;
 
-        for(auto actor: m_actors) actor->Update(deltatime);
+        for(auto actor: m_actors){
+            actor->Update(deltatime);
+        } 
         m_updating_actors = false;
 
         for(auto pending_actor: m_pending_actors) m_actors.emplace_back(pending_actor);
@@ -481,15 +490,16 @@ void Game::ProcessOutput(){
         if(dynamic_cast<Asteroid*>(sprite->GetOwner())) asteroid_counter++;
     }
     
-    // std::string text_counter =  " Enemy obj: "      + std::to_string(enemy_counter) +
-    //                             " Projectile objs:" + std::to_string(projectiles_counter) +
-    //                             " Ship objs: "      + std::to_string(ship_counter) +
-    //                             " Asteroid objs: "  + std::to_string(asteroid_counter);
+    std::string text_counter =  " Enemy obj: "      + std::to_string(enemy_counter) +
+                                " Projectile objs:" + std::to_string(projectiles_counter) +
+                                " Ship objs: "      + std::to_string(ship_counter) +
+                                " Asteroid objs: "  + std::to_string(asteroid_counter);
 
     auto lays = m_lays.at(GetState());
     for(auto layout: lays){
         layout->Draw();
     }
+    m_statistics_hud->Draw();
     SDL_RenderPresent(m_renderer);
 }
 

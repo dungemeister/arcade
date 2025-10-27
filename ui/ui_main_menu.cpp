@@ -16,6 +16,7 @@ UIMainMenu::UIMainMenu(Game* game)
     PushBackWidget(button);
     
     button = new UIButton(this, "Load");
+    button->AddClickStrategy([](){});
     button->SetOpacityPulsing(true);
     button->SetScalePulsing(true);
     PushBackWidget(button);

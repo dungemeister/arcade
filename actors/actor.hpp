@@ -22,10 +22,10 @@ public:
     void UpdateComponents(float deltatime);
     virtual void UpdateActor(float deltatime);
 
-    State GetState()             const { return m_state; }
-    const Vector2& GetPosition() const { return m_position; }
-    float GetScale()             const { return m_scale; }
-    float GetRotation()          const { return m_rotation; }
+    Actor::State GetState()       { return m_state; }
+    const Vector2& GetPosition()  { return m_position; }
+    float GetScale()              { return m_scale; }
+    float GetRotation()          { return m_rotation; }
 
     void SetState(State state)      { m_state = state; }
     void SetPosition(const Vector2& pos)   { m_position = pos;}

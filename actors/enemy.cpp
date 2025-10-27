@@ -4,6 +4,9 @@
 #include "follow_projectile.h"
 #include "game.h"
 #include "follow_move_component.h"
+#include "random.h"
+
+int Enemy::m_amount = 0;
 
 Enemy::Enemy(Game* game, const std::string& sprite_filename)
     :Actor(game)
@@ -15,24 +18,27 @@ Enemy::Enemy(Game* game, const std::string& sprite_filename)
     SpriteComponent *sc = new SpriteComponent(this, 100);
     sc->SetTexture(GetGame()->GetTexture(sprite_filename));
 
-    m_fmc = new FollowMC(this, 30);
-    m_fmc->SetAngularSpeed(0.02f);
+    // m_fmc = new FollowMC(this, 30);
+    // m_fmc->SetAngularSpeed(0.02f);
     // m_fmc->SetForwardSpeed(200.f);
     // m_fmc->SetHorizontalBorder(1200.f);
 
     m_circle = new CircleComponent(this, 30);
     m_circle->SetRadius(sc->GetTextureHeight());
+    m_amount++;
+    game->AddEnemy(this);
+    m_shoot_cooldown_time = Random::GetFloatRange(0, m_shoot_cooldown_period);
     // SDL_Log("Enemy: [%p]", this);
 }
 Enemy::~Enemy(){
-    GetGame()->RemoveEnemy(this);
+    GetGame()->RemoveEnemy(this); m_amount--;
 }
 
 void Enemy::UpdateActor(float deltatime){
     //TODO: objects interception and state checking/disabling
     m_shoot_cooldown_time -= deltatime;
     if(m_shoot_cooldown_time < 0.f) m_shoot_cooldown_time = 0.f;
-    m_fmc->SetTargetPos(GetGame()->GetShipPosition());
+    // m_fmc->SetTargetPos(GetGame()->GetShipPosition());
 
     if(m_shoot_cooldown_time == 0.f)
     {

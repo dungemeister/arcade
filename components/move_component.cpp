@@ -18,6 +18,12 @@ void MoveComponent::Update(float deltatime){
         // std::cout << "rotation:" << m_owner->GetRotation() << " ";
 
     }
+    if(GetVerticalSpeed() != 0){
+        auto pos = m_owner->GetPosition();
+        pos.y += GetVerticalSpeed() * deltatime;
+        if (pos.y < 0.0f) { pos.y = m_owner->GetGame()->GetWindowHeight() - 2.0f; }  
+        m_owner->SetPosition(pos);
+    }
     if(GetForwardSpeed() != 0){
         auto pos = m_owner->GetPosition();
         pos += m_owner->GetForward() * GetForwardSpeed() * deltatime;

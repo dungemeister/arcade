@@ -4,18 +4,18 @@
 InputComponent::InputComponent(Actor* owner, int update_order)
     :MoveComponent(owner, update_order),
     m_max_forward_speed(0),
-    m_max_angular_speed(0),
+    m_max_vertical_speed(0),
     m_forward_key(0),
     m_back_key(0),
-    m_clockwise_key(0),
-    m_counter_clockwise_key(0)
+    m_up_key(0),
+    m_down_key(0)
 {
 
 }
 
 void InputComponent::ProcessInput(const bool* state){
     float forward_speed = 0.f;
-    float angular_speed = 0.f;
+    float vertical_speed = 0.f;
 
     if(state[m_forward_key]){
         forward_speed += m_max_forward_speed;
@@ -28,24 +28,30 @@ void InputComponent::ProcessInput(const bool* state){
     }
     SetForwardSpeed(forward_speed);
 
-    if(state[m_clockwise_key]){
-        angular_speed += m_max_angular_speed;
+    if(state[m_down_key]){
+        vertical_speed += m_max_vertical_speed;
     }
-    if(state[m_counter_clockwise_key]){
-        angular_speed -= m_max_angular_speed;
+    if(state[m_up_key]){
+        vertical_speed -= m_max_vertical_speed;
     }
-    SetAngularSpeed(angular_speed);
+    SetVerticalSpeed(vertical_speed);
 }
 
 void InputComponent::Update(float deltatime){
-    // NewtonianMoveComponent::Update(deltatime);
-    // return;
     if(GetAngularSpeed() != 0){
         float rot = m_owner->GetRotation();
 		rot += GetAngularSpeed() * deltatime;
 		m_owner->SetRotation(rot);
-        // std::cout << "rotation:" << m_owner->GetRotation() << " ";
 
+    }
+    if(GetVerticalSpeed() != 0){
+        auto pos = m_owner->GetPosition();
+        pos.y += GetVerticalSpeed() * deltatime;
+        float vert_up_border = 0.f;
+        float vert_down_border = m_owner->GetGame()->GetWindowHeight();
+        if (pos.y < vert_up_border) { pos.y = vert_up_border - 2.0f; }
+        if (pos.y > vert_down_border) { pos.y = vert_down_border - 2.0f; }
+        m_owner->SetPosition(pos);
     }
     if(GetForwardSpeed() != 0){
         auto pos = m_owner->GetPosition();

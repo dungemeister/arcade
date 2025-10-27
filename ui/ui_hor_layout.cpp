@@ -11,8 +11,6 @@ UIHorLayout::UIHorLayout(Game* game)
 }
 
 void UIHorLayout::PushBackWidget(UIWidget* widget){
-    UILayout::AddWidget(widget);
-
     SDL_FPoint pos = {};
     pos.x = m_rect.x;
     pos.y = m_rect.y + m_rect.h;

@@ -35,6 +35,8 @@ void UIText::UpdateTexture(){
 }
 
 void UIText::SetText(const std::string& text){
+    if(m_text == text) return;
+    
     m_text = text;
     UpdateTexture();
 
@@ -80,6 +82,9 @@ void UIText::DrawBackground(){
 }
 
 SDL_Surface* UIText::CreateSurface(const std::string& text){
+    if(m_font){
+        TTF_CloseFont(m_font);
+    }
     m_font = TTF_OpenFont(m_font_path.c_str(), m_font_size);
     auto res = TTF_SetFontDirection(m_font, TTF_Direction::TTF_DIRECTION_LTR);
     if(!res){

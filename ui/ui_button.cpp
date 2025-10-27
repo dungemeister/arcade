@@ -87,7 +87,7 @@ void UIButton::Update(float deltatime){
         if(m_opacity_pulsing){
             m_opacity = m_opacity_min + (SDL_sinf(m_pulse_val) + 1.0f) * 0.5f * (m_opacity_max - m_opacity_min);
         }
-        if(m_on_hovered) m_on_hovered;
+        if(m_on_hovered) m_on_hovered();
     }
     else{
         m_dst_rect = GetSize();
@@ -106,8 +106,6 @@ void UIButton::HandleEvent(const SDL_Event& event){
     switch(event.type){
         case SDL_EVENT_MOUSE_MOTION:
             Hovered({event.motion.x, event.motion.y});
-
-                
             break;
         case SDL_EVENT_MOUSE_BUTTON_UP:
             if(m_on_click && IsHovered()) OnClick();

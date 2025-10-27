@@ -4,13 +4,14 @@
 EnemyProjectile::EnemyProjectile(Game* game, const std::string& sprite_filename)
     :Projectile(game, sprite_filename)
 {
-    
+    SDL_Log("Enemy proj: [%p]", this);
 }
 
 void EnemyProjectile::UpdateActor(float deltatime){
     if(GetState() == State::Dead) return;
-    if((GetPosition().x < 0 || GetPosition().x > GetGame()->GetWindowWidth()) ||
-       (GetPosition().y < 0 || GetPosition().y > GetGame()->GetWindowHeight())){
+    auto pos = GetPosition();
+    if((pos.x < 0 || pos.x > GetGame()->GetWindowWidth()) ||
+       (pos.y < 0 || pos.y > GetGame()->GetWindowHeight())){
         SetState(State::Dead);
     }
     for(auto ship:  GetGame()->GetShips())

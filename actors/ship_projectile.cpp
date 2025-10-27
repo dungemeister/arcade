@@ -4,10 +4,10 @@
 ShipProjectile::ShipProjectile(Game* game, const std::string& sprite_filename)
     :Projectile(game, sprite_filename)
 {
-    
 }
 
 void ShipProjectile::UpdateActor(float deltatime){
+    // SDL_Log("ship proj UpdateActor()");
     if(GetState() == State::Dead) return;
     if((GetPosition().x < 0 || GetPosition().x > GetGame()->GetWindowWidth()) ||
        (GetPosition().y < 0 || GetPosition().y > GetGame()->GetWindowHeight())){

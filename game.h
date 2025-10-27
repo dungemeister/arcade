@@ -10,6 +10,7 @@
 #include "ui_main_menu.h"
 #include "ui_statistics_hud.h"
 #include "ui_settings.h"
+#include "spawn_component.h"
 
 #include <algorithm>
 #include <vector>

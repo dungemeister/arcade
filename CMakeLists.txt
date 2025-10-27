@@ -1,11 +1,14 @@
 cmake_minimum_required(VERSION 3.15)
-project(hybrid_sdl_probe
+project(arcade
     VERSION 0.1.0
     LANGUAGES C CXX
     DESCRIPTION "game probe from scratch by book lessons")
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_FLAGS_DEBUG "-g -O2 -DDEBUG")
+set(CMAKE_CXX_FLAGS_RELEASE "-g -O2 -DDEBUG")
 find_package(SDL3 REQUIRED CONFIG REQUIRED COMPONENTS SDL3-shared)
 find_package(SDL3_image REQUIRED)
 find_package(SDL3_ttf REQUIRED)
@@ -19,6 +22,7 @@ set(UI_DIR ui)
 set(ACTORS_DIR actors)
 set(COMPONENTS_DIR components)
 set(MISC_DIR misc)
+set(THIRD_PARTY_DIR third_party)
 
 set(SOURCES 
             ${UI_DIR}/ui_layout.cpp
@@ -49,15 +53,16 @@ set(SOURCES
             ${COMPONENTS_DIR}/input_component.cpp
             ${COMPONENTS_DIR}/projectile_move_component.cpp
             ${COMPONENTS_DIR}/follow_move_component.cpp
+            ${COMPONENTS_DIR}/spawn_component.cpp
             ${MISC_DIR}/random.cpp
             game.cpp
-            third_party/stb_vorbis.c
+            ${THIRD_PARTY_DIR}/stb_vorbis.c
 )
-
+set_source_files_properties(${THIRD_PARTY_DIR}/stb_vorbis.c PROPERTIES LANGUAGE CXX)
 add_executable(${PROJECT_NAME} main.cpp)
 
 target_sources(${PROJECT_NAME} PRIVATE ${SOURCES})
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR} ${LIBPULSE_INCLUDE_DIRS})
-target_include_directories(${PROJECT_NAME} PRIVATE ${COMPONENTS_DIR} ${UI_DIR} ${ACTORS_DIR} ${MISC_DIR})
+target_include_directories(${PROJECT_NAME} PRIVATE ${COMPONENTS_DIR} ${UI_DIR} ${ACTORS_DIR} ${MISC_DIR} ${THIRD_PARTY_DIR})
 target_link_libraries(${PROJECT_NAME} PRIVATE pulse pulse-simple)
 target_link_libraries(${PROJECT_NAME} PRIVATE SDL3_image::SDL3_image SDL3_ttf::SDL3_ttf SDL3::SDL3)

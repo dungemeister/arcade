@@ -11,12 +11,16 @@ public:
 
     float GetAngularSpeed() const { return m_angular_speed; }
     float GetForwardSpeed() const { return m_forward_speed; }
+    float GetVerticalSpeed() const { return m_vertical_speed; }
 
     void SetAngularSpeed(float val){ m_angular_speed = val; }
     void SetForwardSpeed(float val){ m_forward_speed = val; }
+    void SetVerticalSpeed(float val) { m_vertical_speed = val; }
+
     virtual void Update(float deltatime) override;
 private:
     float m_angular_speed;
     float m_forward_speed;
+    float m_vertical_speed;
 };
 #endif //MOVE_COMPONENT_H
