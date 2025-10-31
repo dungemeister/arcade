@@ -7,6 +7,7 @@
 class UIText: public UIWidget{
 public:
     UIText(class UILayout* layout);
+    UIText(const std::string& text, class UILayout* layout);
     virtual ~UIText();
     void UpdateTexture();
     void SetText(const std::string& text);

@@ -13,6 +13,12 @@ UIText::UIText(class UILayout* layout)
     m_color = Colors::OceanSunset::bittersweet;
 }
 
+UIText::UIText(const std::string& text, class UILayout* layout)
+    :UIText(layout)
+{
+    SetText(text);
+}
+
 UIText::~UIText(){
     SDL_DestroyTexture(m_texture);
     TTF_CloseFont(m_font);
