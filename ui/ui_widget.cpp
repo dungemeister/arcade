@@ -11,8 +11,13 @@ UIWidget::UIWidget(class UILayout* layout)
         m_layout->AddWidget(this);
 }
 
-UIWidget::UIWidget()
-    :UIWidget(nullptr)
+UIWidget::UIWidget():
+    UIWidget(nullptr)
+{
+
+}
+
+UIWidget::~UIWidget()
 {
     if(m_layout)
         m_layout->RemoveWidget(this);

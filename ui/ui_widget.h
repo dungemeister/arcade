@@ -7,7 +7,7 @@ public:
     typedef SDL_FRect UISize;
     UIWidget(class UILayout*);
     UIWidget();
-    virtual ~UIWidget() = default;
+    virtual ~UIWidget();
 
     void        SetLayout(UILayout* layout) { m_layout = layout; }
     UILayout*   GetLayout() const           { return m_layout; }
