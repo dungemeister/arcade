@@ -50,6 +50,13 @@ void UIText::SetText(const std::string& text){
 
 }
 
+void UIText::SetFontSize(int size){
+    if(size < 0) return;
+
+    m_font_size = size;
+    UpdateTexture();
+}
+
 void UIText::Update(float deltatime){
 
 }

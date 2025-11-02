@@ -11,7 +11,8 @@ public:
     virtual ~UIText();
     void UpdateTexture();
     void SetText(const std::string& text);
-
+    std::string GetText() const { return m_text; }
+    void SetFontSize(int size);
     void SetColor(const SDL_Color& col) {
         m_color = col;
         UpdateTexture();
