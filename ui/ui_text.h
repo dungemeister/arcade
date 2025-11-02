@@ -12,7 +12,10 @@ public:
     void UpdateTexture();
     void SetText(const std::string& text);
 
-    void SetColor(const SDL_Color& col) { m_color = col; }
+    void SetColor(const SDL_Color& col) {
+        m_color = col;
+        UpdateTexture();
+    }
     void Update(float deltatime) override;
     void Draw() override;
     // void HandleEvent(const SDL_Event& event) override;

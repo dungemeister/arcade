@@ -25,6 +25,8 @@ UIText::~UIText(){
 }
 
 void UIText::UpdateTexture(){
+    if(!m_layout) return;
+
     if(m_texture){
         SDL_DestroyTexture(m_texture);
         m_texture = nullptr;
@@ -53,6 +55,8 @@ void UIText::Update(float deltatime){
 }
 
 void UIText::Draw(){
+    if(m_hiden) return;
+
     DrawBackground();
     DrawBorder();
     DrawText();
