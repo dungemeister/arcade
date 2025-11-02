@@ -4,6 +4,8 @@
 #include "circle_component.h"
 #include "animated_sprite_component.h"
 #include "input_component.h"
+#include "heath_component.h"
+#include "energy_component.h"
 
 class Ship: public Actor{
 public:
@@ -11,9 +13,12 @@ public:
     ~Ship();
     void UpdateActor(float deltatime) override;
     void ActorInput(const bool* state) override;
-    void HandleDamage();
+    void HandleDamage(int damage);
     void SetImmortality(bool state) { m_immortal = state; }
     bool IsImmortal() const { return m_immortal; }
+
+    int GetHealth() const { return m_hc->GetHealth(); }
+    int GetEnergy() const { return m_ec->GetEnergy(); }
 
     CircleComponent* GetCircleComponent() { return m_circle; }
 private:
@@ -29,6 +34,8 @@ private:
     InputComponent* m_ic;
     AnimSpriteComponent* m_asc;
     CircleComponent* m_circle;
+    HealthComponent* m_hc;
+    EnergyComponent* m_ec;
 
     bool m_immortal;
 

@@ -46,10 +46,11 @@ bool Game::Initialize(){
     LoadStatisticsHud();
     LoadSettingsUI();
     LoadMainMenu();
+    LoadHud();
 
     m_lays.insert(std::pair<GameState, std::vector<UILayout*>>(GameState::MainMenu, {m_main_menu, m_statistics_hud}));
-    m_lays.insert(std::pair<GameState, std::vector<UILayout*>>(GameState::Active, {m_statistics_hud}));
-    m_lays.insert(std::pair<GameState, std::vector<UILayout*>>(GameState::PauseMenu, {m_statistics_hud}));
+    m_lays.insert(std::pair<GameState, std::vector<UILayout*>>(GameState::Active, {m_statistics_hud, m_hud_ui}));
+    m_lays.insert(std::pair<GameState, std::vector<UILayout*>>(GameState::PauseMenu, {m_statistics_hud, m_hud_ui}));
     m_lays.insert(std::pair<GameState, std::vector<UILayout*>>(GameState::Settings, {m_settings_ui, m_statistics_hud}));
 
     m_current_ticks = SDL_GetTicks();
@@ -111,7 +112,6 @@ void Game::StartGame(){
     SetState(GameState::Active);
     UnloadMainMenu();
     LoadData();
-    LoadHud();
 }
 
 void Game::EndGame(){
@@ -228,11 +228,14 @@ void Game::UnloadStatisticsHud(){
 
 
 void Game::LoadHud(){
-
+    m_hud_ui = new UIHud(this);
 }
 
 void Game::UnloadHud(){
-
+    auto it = std::find(m_ui_layouts.begin(), m_ui_layouts.end(), m_hud_ui);
+    // m_ui_layouts.erase(it);
+    if(it != m_ui_layouts.end())
+        (*it)->SetState(UILayout::State::EClosed);
 }
 
 void Game::LoadData(){
@@ -466,12 +469,13 @@ void Game::UpdateGame(){
             delete actor;
         }
         m_dead_actors.clear();
+        
+        m_hud_ui->Update(deltatime);
     }
     else if(m_state == GameState::MainMenu){
         m_main_menu->Update(deltatime);
     }
     m_statistics_hud->Update(deltatime);
-
 }
 void Game::ProcessOutput(){
     SDL_SetRenderDrawColor(m_renderer, 0x18, 0x18, 0x18, 255);
@@ -503,28 +507,24 @@ void Game::ProcessOutput(){
     SDL_RenderPresent(m_renderer);
 }
 
-void Game::PlayAudioThread(std::string filename){
-    
+int Game::GetShipHealth() const{
+    if(m_ships.size() == 0) return 0;
+
+    return m_ships[0]->GetHealth();
 }
 
-bool Game::RenderText( SDL_Renderer* renderer, const SDL_Color& color,
-                     const std::string& text, const Vector2& pos,
-                     int font_size)
-{
-    //Каждый раз генерится текстура, что может быть не оптимально
-    SetFontSize(font_size);
-    SDL_Surface* surface = TTF_RenderText_Blended(m_info_font, text.c_str(), 0, color);
-    if(!surface){
-        SDL_Log("%s", SDL_GetError());
-    }
-    SDL_Texture* texture = SDL_CreateTextureFromSurface(m_renderer, surface);
-    if(!texture){
-        SDL_Log("%s", SDL_GetError());
-    }
-    SDL_FRect dst_fps_rect = {static_cast<float>(pos.x - surface->w), static_cast<float>(pos.y),
-                            static_cast<float>(surface->w), static_cast<float>(surface->h)};
+int Game::GetShipEnergy() const{
+    if(m_ships.size() == 0) return 0;
+
+    return m_ships[0]->GetEnergy();
+}
+
+void Game::KilledEnemy(){
+    if(!m_hud_ui) return;
+
+    m_hud_ui->IncreaseScore(10);
+}
+
+void Game::PlayAudioThread(std::string filename){
     
-    SDL_DestroySurface(surface);
-    
-    return SDL_RenderTexture(m_renderer, texture, NULL, &dst_fps_rect);
 }

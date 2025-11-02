@@ -37,6 +37,13 @@ Ship::Ship(Game* game)
 
 	m_circle = new CircleComponent(this, 50);
 	m_circle->SetRadius(static_cast<float>((m_asc->GetTextureHeight() / 2)));
+	
+	m_hc = new HealthComponent(this, 10);
+	m_hc->SetHealth(10);
+
+	m_ec = new EnergyComponent(this, 10);
+	m_ec->SetEnergy(10);
+	
 	SDL_Log("Ship: [%p]", this);
 
 	game->AddShip(this);
@@ -83,9 +90,12 @@ void Ship::ActorInput(const bool* state){
 	
 }
 
-void Ship::HandleDamage(){
+void Ship::HandleDamage(int damage){
 	SetImmortality(true);
 	StartFlickAnimation();
+	if(m_hc){
+		m_hc->TakeDamage(damage);
+	}
 }
 
 void Ship::StartFlickAnimation(){

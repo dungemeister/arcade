@@ -136,10 +136,10 @@ public:
     void UpdateGame();
     void ProcessOutput();
     
+    void KilledEnemy();
+    int GetShipHealth() const;
+    int GetShipEnergy() const;
     SDL_Renderer* GetRenderer() const { return m_renderer; }
-    bool RenderText( SDL_Renderer* renderer, const SDL_Color& color,
-                    const std::string& text, const Vector2& pos,
-                    int font_size=24);
 
     void PlayAudioThread(std::string filename);
     void StopMusicThread();
@@ -161,6 +161,7 @@ private:
     UIMainMenu* m_main_menu;
     UIStatisticsHud* m_statistics_hud;
     UISettings* m_settings_ui;
+    UIHud* m_hud_ui;
 
     std::unordered_map<std::string, SDL_Texture*> m_textures;
     bool m_updating_actors;

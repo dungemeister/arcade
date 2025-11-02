@@ -20,6 +20,7 @@ void ShipProjectile::UpdateActor(float deltatime){
                 SetState(State::Dead);
             enemy->SetState(State::Dead);
             SDL_Log("Killed enemy %p, with ship proj %p", enemy, this);
+            GetGame()->KilledEnemy();
             break;
         }
     }
