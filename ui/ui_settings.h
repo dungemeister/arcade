@@ -9,6 +9,7 @@ public:
     ~UISettings() = default;
     void Draw() override;
     void Update(float delatime) override;
+    void HandleEvent(const SDL_Event& event) override;
 
 private:
 

@@ -37,7 +37,6 @@ public:
     void HandleEvent(const SDL_Event& event) override;
 
     void OnClick();
-    void Hovered(const SDL_FPoint& mouse_pos);
     void AddClickStrategy(std::function<void()> cb) { m_on_click = cb; }
 private:
     std::string m_text;

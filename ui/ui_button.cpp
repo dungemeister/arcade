@@ -121,16 +121,7 @@ void UIButton::OnClick(){
 
 }
 
-void UIButton::Hovered(const SDL_FPoint& mouse_pos){
 
-    if(СontainsPoint(mouse_pos)){
-        SetHovered(true);
-    }
-    else{
-        SetHovered(false);
-
-    }
-}
 
 void UIButton::DrawBackground(){
     if(IsHovered()){
