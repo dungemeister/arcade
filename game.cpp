@@ -40,7 +40,7 @@ bool Game::Initialize(){
         SDL_Log("Failed to create SDL3 renderer");
     }
     //Init Audio
-    InitPulseAudio();
+    // InitPulseAudio();
 
     LoadBackground();
     LoadStatisticsHud();
@@ -49,7 +49,7 @@ bool Game::Initialize(){
     LoadHud();
 
     m_lays.insert(std::pair<GameState, std::vector<UILayout*>>(GameState::MainMenu, {m_main_menu, m_statistics_hud}));
-    m_lays.insert(std::pair<GameState, std::vector<UILayout*>>(GameState::Active, {m_statistics_hud, m_hud_ui}));
+    m_lays.insert(std::pair<GameState, std::vector<UILayout*>>(GameState::Gameplay, {m_statistics_hud, m_hud_ui}));
     m_lays.insert(std::pair<GameState, std::vector<UILayout*>>(GameState::PauseMenu, {m_statistics_hud, m_hud_ui}));
     m_lays.insert(std::pair<GameState, std::vector<UILayout*>>(GameState::Settings, {m_settings_ui, m_statistics_hud}));
 
@@ -99,7 +99,7 @@ void Game::InitPulseAudio(){
     m_music_thr = std::thread([this, m_main_theme, ss](){
         int error;
         while(m_music_play){
-            while(m_music_play && m_state == GameState::Active && stb_vorbis_get_samples_short_interleaved(m_main_theme, ss.channels, m_buffer, sizeof(m_buffer) / sizeof(int16_t))){
+            while(m_music_play && m_state == GameState::Gameplay && stb_vorbis_get_samples_short_interleaved(m_main_theme, ss.channels, m_buffer, sizeof(m_buffer) / sizeof(int16_t))){
                 auto res = pa_simple_write(m_server, m_buffer, sizeof(m_buffer), &error);
             }
         }
@@ -108,29 +108,30 @@ void Game::InitPulseAudio(){
 }
 
 void Game::StartGame(){
-    SDL_Log("StartGame()");
-    SetState(GameState::Active);
-    UnloadMainMenu();
+    SDL_Log("%s", __func__);
+    SetState(GameState::Gameplay);
     LoadData();
 }
 
 void Game::EndGame(){
+    SDL_Log("%s", __func__);
+    SwitchState(GameState::MainMenu);
     UnloadData();
-    UnloadHud();
-    LoadMainMenu();
 }
 
 void Game::StartSettingsUI(){
-    UnloadMainMenu();
-    UnloadData();
-    UnloadHud();
-    LoadSettingsUI();
+    SDL_Log("%s", __func__);
+    SetState(GameState::Settings);
+    // UnloadMainMenu();
+    // UnloadData();
+    // UnloadHud();
+    // LoadSettingsUI();
 }
 
-void Game::EndSettingsUI(){
-    UnloadSettingsUI();
-    SetState(GameState::MainMenu);
-}
+// void Game::EndSettingsUI(){
+//     UnloadSettingsUI();
+//     SetState(GameState::MainMenu);
+// }
 
 
 void Game::StopMusicThread(){
@@ -164,6 +165,10 @@ SDL_Texture* Game::GetTexture(const std::string& filename){
         text = LoadTexture(filename.c_str());
     }
     return text;
+}
+
+void Game::UnloadTextures(){
+    auto lambda = []{};
 }
 
 void Game::LoadBackground(){
@@ -250,8 +255,11 @@ void Game::LoadData(){
     ship->SetPosition({100, m_height / 2});
     ship->SetScale(2.f);
 
-    Actor* actor = new Actor(this);
-    auto spawner = new SpawnComponent(actor, 100);
+    if(!m_spawner_actor){
+        m_spawner_actor = new Actor(this);
+    }
+    m_spawner_actor->SetState(Actor::Active);
+    auto spawner = new SpawnComponent(m_spawner_actor, 100);
 
     // for(int i = 0; i < 1000; i++)
     // {
@@ -344,6 +352,13 @@ void Game::RemoveAllEnemies(){
     while(!m_enemies.empty()){
         delete m_enemies.back();
     }
+    if(m_spawner_actor)
+    {
+        delete m_spawner_actor;
+        m_spawner_actor = nullptr;
+
+    }
+
 }
 
 void Game::AddShip(Ship* ship){
@@ -393,6 +408,30 @@ void Game::run(){
     }
 }
 
+void Game::HandleActors(float deltatime){
+    m_updating_actors = true;
+
+    for(auto actor: m_actors){
+        actor->Update(deltatime);
+    } 
+    m_updating_actors = false;
+
+    for(auto pending_actor: m_pending_actors) m_actors.emplace_back(pending_actor);
+    m_pending_actors.clear();
+
+
+    for(auto actor: m_actors){
+        if(actor->GetState() == Actor::State::Dead){
+            m_dead_actors.emplace_back(actor);
+        } 
+    }
+
+    for(auto actor: m_dead_actors){
+        delete actor;
+    }
+    m_dead_actors.clear();
+}
+
 void Game::ProcessInput(){
     SDL_Event event;
     while(SDL_PollEvent(&event)){
@@ -402,21 +441,27 @@ void Game::ProcessInput(){
                 break;
             case SDL_EVENT_KEY_UP: //Key released
                 if(event.key.key == SDLK_SPACE){
-                    if(m_state == GameState::Active) m_state = GameState::PauseMenu;
-                    else if(m_state == GameState::PauseMenu) m_state = GameState::Active;
+                    if(GetState() == GameState::Gameplay) SwitchState(GameState::PauseMenu);
+                    else if(GetState() == GameState::PauseMenu) SwitchState(GameState::Gameplay);
                 }
                 if(event.key.key == SDLK_ESCAPE){
                     if(GetState() == GameState::Settings)
                     {
-                        UnloadSettingsUI();
-                        LoadMainMenu();
+                        SwitchState(GameState::MainMenu);
+                    }
+                    if(GetState() == GameState::Gameplay){
+                        EndGame();
                     }
                 }
                 if(event.key.key == SDLK_R){
-                    UnloadData();
+                    if(GetState() == GameState::Gameplay){
+                        UnloadData();
+                    }
                 }
                 if(event.key.key == SDLK_N){
-                    LoadData();
+                    if(GetState() == GameState::Gameplay){
+                        LoadData();
+                    }
                 }
                 break;
             
@@ -447,32 +492,12 @@ void Game::UpdateGame(){
     float deltatime = std::min(static_cast<float>(SDL_GetTicks() - m_current_ticks) / 1000, 0.01f);
     m_current_ticks = SDL_GetTicks();
     
-    if(m_state == GameState::Active){
-        m_updating_actors = true;
-
-        for(auto actor: m_actors){
-            actor->Update(deltatime);
-        } 
-        m_updating_actors = false;
-
-        for(auto pending_actor: m_pending_actors) m_actors.emplace_back(pending_actor);
-        m_pending_actors.clear();
-
-
-        for(auto actor: m_actors){
-            if(actor->GetState() == Actor::State::Dead){
-                m_dead_actors.emplace_back(actor);
-            } 
-        }
-
-        for(auto actor: m_dead_actors){
-            delete actor;
-        }
-        m_dead_actors.clear();
-        
+    if(GetState() == GameState::Gameplay){
+        HandleActors(deltatime);
         m_hud_ui->Update(deltatime);
     }
-    else if(m_state == GameState::MainMenu){
+    else if(GetState() == GameState::MainMenu){
+        HandleActors(deltatime);
         m_main_menu->Update(deltatime);
     }
     m_statistics_hud->Update(deltatime);
@@ -503,7 +528,7 @@ void Game::ProcessOutput(){
     for(auto layout: lays){
         layout->Draw();
     }
-    m_statistics_hud->Draw();
+    // m_statistics_hud->Draw();
     SDL_RenderPresent(m_renderer);
 }
 
@@ -527,4 +552,44 @@ void Game::KilledEnemy(){
 
 void Game::PlayAudioThread(std::string filename){
     
+}
+
+void Game::SwitchState(GameState state){
+    switch(m_state){
+        case GameState::MainMenu:
+            if(state == GameState::PauseMenu){
+                SDL_Log("fail to switch state from %d to %d", m_state, state);
+            }
+            else{
+                SetState(state);
+            } 
+        break;
+        case GameState::Settings:
+            if(state == GameState::MainMenu){
+                SetState(state);
+            }
+            else{
+                SDL_Log("fail to switch state from %d to %d", m_state, state);
+            }
+        break;
+        case GameState::Gameplay:
+            if(state == GameState::PauseMenu || state == GameState::MainMenu){
+                SetState(state);
+            }
+            else{
+                SDL_Log("fail to switch state from %d to %d", m_state, state);
+            }
+        break;
+        case GameState::PauseMenu:
+            if(state == GameState::MainMenu || state == GameState::Gameplay){
+                SetState(state);
+            }
+            else{
+                SDL_Log("fail to switch state from %d to %d", m_state, state);
+            }
+        break;
+        default:
+            SDL_Log("fail to switch state from %d to %d", m_state, state);
+
+    }
 }

@@ -13,6 +13,8 @@ Ship::Ship(Game* game)
 	,m_asc(nullptr)
 	,m_circle(nullptr)
 	,m_immortal(false)
+	,m_energy_period(1.f)
+	,m_energy_cooldown(1.f)
 {
     std::vector<SDL_Texture*> anim_textures = {
         game->GetTexture("Assets/Ship01.png"),
@@ -43,7 +45,7 @@ Ship::Ship(Game* game)
 
 	m_ec = new EnergyComponent(this, 10);
 	m_ec->SetEnergy(10);
-	
+
 	SDL_Log("Ship: [%p]", this);
 
 	game->AddShip(this);
@@ -60,6 +62,8 @@ void Ship::UpdateActor(float deltatime){
 
 	if(m_laser_cooldown_time < 0) m_laser_cooldown_time = 0.f;
 	if(m_alt_laser_cooldown_time < 0) m_alt_laser_cooldown_time = 0.f;
+
+	AccumulateEnergy(deltatime);
 }
 
 void Ship::ActorInput(const bool* state){
@@ -67,24 +71,28 @@ void Ship::ActorInput(const bool* state){
 	if(state[m_laser_shoot_key] && !m_laser_cooldown_time){
 		m_laser_cooldown_time = m_laser_cooldown_period;
 
-		ShipProjectile* laser = new ShipProjectile(GetGame(), "Assets/Laser.png");
-		ProjectileMC* pmc = new ProjectileMC(laser, 30);
-		laser->SetMoveStrategy(pmc);
-		laser->SetProjectileForwardSpeed(800.f);
-		laser->SetPosition(GetPosition());
-		laser->SetRotation(GetRotation());
+		if(m_ec->SpendEnergy(1)){
+			ShipProjectile* laser = new ShipProjectile(GetGame(), "Assets/Laser.png");
+			ProjectileMC* pmc = new ProjectileMC(laser, 30);
+			laser->SetMoveStrategy(pmc);
+			laser->SetProjectileForwardSpeed(800.f);
+			laser->SetPosition(GetPosition());
+			laser->SetRotation(GetRotation());
+		}
 
 	}
 	if(state[m_alt_laser_shoot_key] && !m_alt_laser_cooldown_time){
 		m_alt_laser_cooldown_time = m_alt_laser_cooldown_period;
 
-		ShipProjectile* alt_laser = new ShipProjectile(GetGame(), "Assets/Laser_.png");
-		ProjectileMC* pmc = new ProjectileMC(alt_laser, 30);
-		alt_laser->SetMoveStrategy(pmc);
-		alt_laser->SetProjectileForwardSpeed(400.f);
-		alt_laser->SetPosition(GetPosition());
-		alt_laser->SetRotation(GetRotation());
-		alt_laser->SetPiercing(true);
+		if(m_ec->SpendEnergy(5)){
+			ShipProjectile* alt_laser = new ShipProjectile(GetGame(), "Assets/Laser_.png");
+			ProjectileMC* pmc = new ProjectileMC(alt_laser, 30);
+			alt_laser->SetMoveStrategy(pmc);
+			alt_laser->SetProjectileForwardSpeed(400.f);
+			alt_laser->SetPosition(GetPosition());
+			alt_laser->SetRotation(GetRotation());
+			alt_laser->SetPiercing(true);
+		}
 
 	}
 	
@@ -95,6 +103,14 @@ void Ship::HandleDamage(int damage){
 	StartFlickAnimation();
 	if(m_hc){
 		m_hc->TakeDamage(damage);
+	}
+}
+
+void Ship::AccumulateEnergy(float deltatime){
+	m_energy_cooldown -= deltatime;
+	if(m_energy_cooldown <=0){
+		m_ec->AccumulateEnergy(1);
+		m_energy_cooldown = m_energy_period;
 	}
 }
 

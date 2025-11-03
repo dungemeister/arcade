@@ -47,8 +47,11 @@ void UIHud::UpdateHealth(){
 }
 
 void UIHud::UpdateEnergy(){
-    auto tmp = "Energy:" + std::to_string(GetGame()->GetShipEnergy());
-    m_energy_text->SetText(tmp);
+    std::stringstream data;
+    data << "Energy:" << std::setprecision(0)
+         << GetGame()->GetShipEnergy();
+    // auto tmp = "Energy:" + std::to_string(GetGame()->GetShipEnergy());
+    m_energy_text->SetText(data.str());
 }
 
 void UIHud::Update(float deltatime){

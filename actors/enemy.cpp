@@ -43,6 +43,11 @@ void Enemy::UpdateActor(float deltatime){
     if(m_shoot_cooldown_time == 0.f)
     {
         
+        auto diff_vec = GetGame()->GetShipPosition() - GetPosition();
+        auto computed_rad = Vector2::GetRotationAngleRad(GetForward(), diff_vec);
+
+        if(std::abs(computed_rad) >= M_PI / 180) return; // ~Pi/36 = 5 degree
+
         EnemyProjectile* laser = new EnemyProjectile(GetGame(), "Assets/Laser.png");
         // FollowProjectile* laser = new FollowProjectile(GetGame(), "Assets/Laser.png");
         
@@ -54,7 +59,7 @@ void Enemy::UpdateActor(float deltatime){
         laser->SetPosition(GetPosition());
         laser->SetProjectileForwardSpeed(500.f);
         laser->SetScale(2.f);
-
+        
         m_shoot_cooldown_time = m_shoot_cooldown_period;
     }
 }

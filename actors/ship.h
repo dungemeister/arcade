@@ -14,6 +14,7 @@ public:
     void UpdateActor(float deltatime) override;
     void ActorInput(const bool* state) override;
     void HandleDamage(int damage);
+    void AccumulateEnergy(float deltatime);
     void SetImmortality(bool state) { m_immortal = state; }
     bool IsImmortal() const { return m_immortal; }
 
@@ -31,6 +32,8 @@ private:
     float m_alt_laser_cooldown_time;
     int m_alt_laser_shoot_key;
 
+    float m_energy_period;
+    float m_energy_cooldown;
     InputComponent* m_ic;
     AnimSpriteComponent* m_asc;
     CircleComponent* m_circle;

@@ -9,6 +9,7 @@ UIStatisticsHud::UIStatisticsHud(Game* game)
     ,m_update_time(0.f)
     ,m_last_time(0.f)
     ,m_frame_time(0.f)
+    ,m_current_fps(0.f)
 {
     m_fps = new UIText(this);
     m_fps->SetPosition({0, 0});

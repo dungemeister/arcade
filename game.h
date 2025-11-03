@@ -36,6 +36,12 @@ public:
     ,m_music_play(false)
     ,m_fps(0.f)
     ,m_font_size(24)
+    ,m_statistics_hud(nullptr)
+    ,m_settings_ui(nullptr)
+    ,m_main_menu(nullptr)
+    ,m_hud_ui(nullptr)
+    ,m_spawner_actor(nullptr)
+    ,m_updating_actors(false)
     {
         
         auto res = Initialize();
@@ -45,8 +51,9 @@ public:
     enum GameState{
         MainMenu,
         Settings,
-        Active,
+        Gameplay,
         PauseMenu,
+        GameOver,
     };
 
     float GetWindowWidth() const { return m_width; }
@@ -68,6 +75,7 @@ public:
 
     SDL_Texture* LoadTexture(const char* fileName);
     SDL_Texture* GetTexture(const std::string& filename);
+    void UnloadTextures();
 
     void LoadBackground();
     void UnloadBackground();
@@ -89,8 +97,6 @@ public:
 
     void Shutdown(){
         UnloadData();
-        // UnloadHud();
-        UnloadMainMenu();
         UnloadBackground();
 
         StopMusicThread();
@@ -144,6 +150,8 @@ public:
     void PlayAudioThread(std::string filename);
     void StopMusicThread();
 
+    void SwitchState(GameState state);
+    void HandleActors(float deltatime);
 private:
     SDL_Window* m_window;
     SDL_Renderer* m_renderer;
@@ -173,6 +181,7 @@ private:
     std::vector<Asteroid*> m_asteroids;
     std::vector<Enemy*> m_enemies;
     std::vector<UILayout*> m_ui_layouts;
+    Actor* m_spawner_actor;
 
     std::unordered_map<GameState, std::vector<UILayout*>> m_lays;
     std::thread m_music_thr;
